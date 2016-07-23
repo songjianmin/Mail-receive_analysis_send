@@ -6,6 +6,7 @@ from mcclog import mcclog
 import poplib
 import smtplib
 import re
+import chardet
 # import sys
 
 # reload(sys)
@@ -58,11 +59,11 @@ class mailHelper(object):
     def analysisMail(self,mailBody):
         self.mcclog.mccWriteLog(u'开始分析获取subject和发件人')
         try:
-            subject = re.search("'Thread-Topic: (.*?)'",str(mailBody[1]).decode('utf-8'),re.S).groups(0)
+            subject = re.search("'Subject: (.*?)'",str(mailBody[1]),re.S).groups(0)
             # subj = subject
             # print type(subj)
             # print subj[0]
-            sender = re.search("'From: =.*= <(.*?)>'",str(mailBody[1]).decode('utf-8'),re.S).groups(0)
+            sender = re.search("'From: .* <(.*?)>'",str(mailBody[1]),re.S).groups(0)
             print sender
             command = {'subject':subject[0],'sender':sender[0]}
             self.mcclog.mccWriteLog(u'分析获取subject和发件人成功')
@@ -81,8 +82,8 @@ class mailHelper(object):
             self.mcclog.mccError(u'发件箱配置失败'+str(e))
             exit()
 
-    def sendMail(self,subject,receiver,body="Success"):
-        msg = MIMEText(body,'plain','utf-8')
+    def sendMail(self,subject,receiver,bodycon="aaaaa"):
+        msg = MIMEText(bodycon,'plain','utf-8')
         msg['Subject'] = subject
         msg['from'] = self.username
         self.mcclog.mccWriteLog(u'开始发送邮件'+'to'+receiver)
@@ -108,5 +109,5 @@ if __name__ == '__main__':
     body = mail.acceptMail()
     print body
     print mail.analysisMail(body)
-    # mail.sendMail('test','Boss')
+    # mail.sendMail('aaa','Boss')
 
